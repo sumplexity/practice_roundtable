@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Practice Roundtable</title>
+  <meta name="description" content="A monthly forum for senior voices in UK private aesthetic practice.">
+  <meta name="theme-color" content="#F7F2E9">
+
+  <!-- Open Graph / link previews -->
+  <meta property="og:title" content="The Practice Roundtable">
+  <meta property="og:description" content="A monthly forum for senior voices in UK private aesthetic practice.">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #F7F2E9;
+      --ink: #1A1A1F;
+      --muted: #6B635A;
+      --accent: #0A4D1C;
+      --rule: #D9CFB8;
+      --rule-soft: #E8DFC9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Public Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Subtle paper grain */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.35;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 56px 28px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Wordmark — typography-led */
+    .wordmark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 88px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease-out 0.05s forwards;
+    }
+
+    .wordmark .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .wordmark .name {
+      font-family: 'Newsreader', serif;
+      font-weight: 500;
+      font-size: 19px;
+      letter-spacing: -0.005em;
+      line-height: 1;
+      font-variation-settings: "opsz" 20;
+    }
+
+    /* Hero */
+    .hero {
+      margin-bottom: 72px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out 0.2s forwards;
+    }
+
+    .hero h1 {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: clamp(30px, 6.2vw, 40px);
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin-bottom: 28px;
+      font-variation-settings: "opsz" 36;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+      font-variation-settings: "opsz" 36;
+    }
+
+    .hero .subhead {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 19px;
+      color: var(--ink);
+      opacity: 0.78;
+      line-height: 1.4;
+      font-variation-settings: "opsz" 20;
+    }
+
+    .hero .subhead + .subhead {
+      margin-top: 10px;
+    }
+
+    /* Sections */
+    section {
+      padding: 32px 0;
+      border-top: 1px solid var(--rule);
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out forwards;
+    }
+
+    section:nth-of-type(1) { animation-delay: 0.35s; }
+    section:nth-of-type(2) { animation-delay: 0.45s; }
+
+    .label {
+      font-family: 'Public Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .topic {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 14px;
+      font-variation-settings: "opsz" 24;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Format list */
+    .format {
+      list-style: none;
+      counter-reset: f;
+    }
+
+    .format li {
+      counter-increment: f;
+      padding: 14px 0 14px 38px;
+      position: relative;
+      border-bottom: 1px solid var(--rule-soft);
+      font-size: 15.5px;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .format li:last-child { border-bottom: none; }
+
+    .format li::before {
+      content: counter(f, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 16px;
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    /* CTA — inline form */
+    .cta-block {
+      margin-top: 56px;
+      padding: 36px 28px;
+      background: var(--ink);
+      color: var(--bg);
+      border-radius: 2px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out 0.7s forwards;
+    }
+
+    .cta-block .label {
+      color: rgba(247, 242, 233, 0.55);
+      margin-bottom: 12px;
+    }
+
+    .cta-block h3 {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.3;
+      margin-bottom: 28px;
+      color: var(--bg);
+      letter-spacing: -0.01em;
+    }
+
+    .cta-form {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .cta-form .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cta-form label {
+      font-family: 'Public Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(247, 242, 233, 0.55);
+    }
+
+    .cta-form input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(247, 242, 233, 0.3);
+      color: var(--bg);
+      font-family: 'Public Sans', sans-serif;
+      font-size: 15.5px;
+      font-weight: 400;
+      padding: 8px 0;
+      outline: none;
+      transition: border-color 0.2s ease;
+      border-radius: 0;
+    }
+
+    .cta-form input::placeholder {
+      color: rgba(247, 242, 233, 0.4);
+    }
+
+    .cta-form input:focus {
+      border-bottom-color: var(--bg);
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      align-self: flex-start;
+      margin-top: 10px;
+      font-family: 'Public Sans', sans-serif;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--bg);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(247, 242, 233, 0.3);
+      padding: 12px 0;
+      cursor: pointer;
+      transition: gap 0.3s ease, border-color 0.3s ease;
+    }
+
+    .cta-button:hover {
+      gap: 18px;
+      border-bottom-color: var(--bg);
+    }
+
+    .cta-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .cta-button .arrow {
+      font-family: 'Newsreader', serif;
+      font-size: 18px;
+    }
+
+    .cta-error {
+      display: none;
+      margin-top: 4px;
+      font-size: 13.5px;
+      color: rgba(247, 242, 233, 0.75);
+    }
+
+    .cta-error.visible { display: block; }
+
+    .cta-success {
+      font-family: 'Newsreader', serif;
+      font-size: 19px;
+      line-height: 1.45;
+      color: var(--bg);
+      font-variation-settings: "opsz" 20;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 64px;
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      font-size: 13px;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.9s ease-out 0.85s forwards;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 1px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    footer .copy {
+      flex: 1 1 100%;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 720px) {
+      .container { padding: 80px 40px 96px; }
+      .wordmark { margin-bottom: 112px; }
+      .hero { margin-bottom: 88px; }
+      .hero .subhead { font-size: 22px; }
+      .topic { font-size: 26px; }
+      .cta-block { padding: 44px 36px; }
+      .cta-block h3 { font-size: 26px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+      .wordmark, .hero, section, .cta-block, footer { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="wordmark">
+      <div class="dot" aria-hidden="true"></div>
+      <div class="name">The Practice Roundtable</div>
+    </header>
+
+    <div class="hero">
+      <h1>Where senior aesthetic practitioners think out loud together, <em>in private</em>.</h1>
+      <p class="subhead">Three speakers each month on the issues shaping the field.</p>
+      <p class="subhead">Future speakers are invited from the attendees.</p>
+    </div>
+
+    <section class="next">
+      <div class="label">Next Session</div>
+      <h2 class="topic">When complications become claims.</h2>
+      <div class="meta">
+        <span>A medico-legal caseworker's view of aesthetic practice.</span>
+      </div>
+    </section>
+
+    <section class="format-section">
+      <div class="label">Format</div>
+      <ol class="format">
+        <li>Three senior practitioners. One topic. Discussed, not presented.</li>
+        <li>Listening is the route in. Speakers are invited from the attendees.</li>
+        <li>Held in private. No recording. No marketing.</li>
+      </ol>
+    </section>
+
+    <div class="cta-block" id="cta-block">
+      <div class="label">Take a Seat</div>
+      <h3>Ask to be in the room for the next session.</h3>
+
+      <form class="cta-form" id="rsvp-form" novalidate>
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="practice">Practice (optional)</label>
+          <input type="text" id="practice" name="practice" autocomplete="organization">
+        </div>
+        <button type="submit" class="cta-button" id="submit-button">
+          <span class="label-text">Request a seat</span>
+          <span class="arrow">→</span>
+        </button>
+        <div class="cta-error" id="cta-error">Something went wrong. Please try again in a moment.</div>
+      </form>
+    </div>
+
+    <footer>
+      <div class="copy">© 2026 The Practice Roundtable</div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Replace with the deployed Apps Script web app URL once published.
+    const ENDPOINT_URL = 'REPLACE_WITH_APPS_SCRIPT_URL';
+
+    const form = document.getElementById('rsvp-form');
+    const submitButton = document.getElementById('submit-button');
+    const buttonLabel = submitButton.querySelector('.label-text');
+    const errorEl = document.getElementById('cta-error');
+    const ctaBlock = document.getElementById('cta-block');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorEl.classList.remove('visible');
+
+      if (!ENDPOINT_URL || ENDPOINT_URL === 'REPLACE_WITH_APPS_SCRIPT_URL') {
+        errorEl.textContent = 'RSVP is not live yet. Please add the Apps Script URL first.';
+        errorEl.classList.add('visible');
+        return;
+      }
+
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const practice = form.practice.value.trim();
+
+      if (!name || !email) {
+        errorEl.textContent = 'Please add your name and email.';
+        errorEl.classList.add('visible');
+        return;
+      }
+
+      submitButton.disabled = true;
+      buttonLabel.textContent = 'Sending…';
+
+      const body = new URLSearchParams({ name, email, practice, source: 'page' });
+
+      try {
+        // Apps Script accepts x-www-form-urlencoded without CORS preflight.
+        await fetch(ENDPOINT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body
+        });
+
+        // no-cors returns an opaque response; assume success unless fetch threw.
+        ctaBlock.innerHTML = `
+          <div class="label">Take a Seat</div>
+          <p class="cta-success">You're on the list. Details for the next session will be in your inbox.</p>
+        `;
+      } catch (err) {
+        submitButton.disabled = false;
+        buttonLabel.textContent = 'Request a seat';
+        errorEl.textContent = 'Something went wrong. Please try again in a moment.';
+        errorEl.classList.add('visible');
+      }
+    });
+  </script>
+</body>
+</html>
