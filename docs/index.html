@@ -629,14 +629,48 @@
   </div>
 
   <script>
+    const ENDPOINT_OVERRIDE = new URLSearchParams(window.location.search).get('endpoint');
     // Replace with the deployed Apps Script web app URL once published.
-    const ENDPOINT_URL = 'REPLACE_WITH_APPS_SCRIPT_URL';
+    const ENDPOINT_URL = ENDPOINT_OVERRIDE || 'REPLACE_WITH_APPS_SCRIPT_URL';
 
     const form = document.getElementById('rsvp-form');
     const submitButton = document.getElementById('submit-button');
     const buttonLabel = submitButton.querySelector('.label-text');
     const errorEl = document.getElementById('cta-error');
     const ctaBlock = document.getElementById('cta-block');
+
+    function getClientMetadata() {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      const metadata = {
+        source: 'page',
+        page_url: window.location.href,
+        page_path: window.location.pathname,
+        page_host: window.location.host,
+        referrer: document.referrer || '',
+        submitted_at_client: new Date().toISOString(),
+        user_agent: navigator.userAgent || '',
+        language: navigator.language || '',
+        languages: Array.isArray(navigator.languages) ? navigator.languages.join(', ') : '',
+        platform: navigator.userAgentData && navigator.userAgentData.platform ? navigator.userAgentData.platform : (navigator.platform || ''),
+        vendor: navigator.vendor || '',
+        timezone,
+        timezone_offset_minutes: String(new Date().getTimezoneOffset()),
+        screen_width: String(window.screen.width || ''),
+        screen_height: String(window.screen.height || ''),
+        viewport_width: String(window.innerWidth || ''),
+        viewport_height: String(window.innerHeight || ''),
+        color_depth: String(window.screen.colorDepth || ''),
+        pixel_ratio: String(window.devicePixelRatio || ''),
+        touch_points: String(navigator.maxTouchPoints || 0),
+        cookie_enabled: String(navigator.cookieEnabled),
+        do_not_track: navigator.doNotTrack || '',
+        online: String(navigator.onLine),
+        device_memory_gb: navigator.deviceMemory ? String(navigator.deviceMemory) : '',
+        hardware_concurrency: navigator.hardwareConcurrency ? String(navigator.hardwareConcurrency) : ''
+      };
+
+      return metadata;
+    }
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -661,7 +695,12 @@
       submitButton.disabled = true;
       buttonLabel.textContent = 'Sending…';
 
-      const body = new URLSearchParams({ name, email, practice, source: 'page' });
+      const body = new URLSearchParams({
+        name,
+        email,
+        practice,
+        ...getClientMetadata()
+      });
 
       try {
         // Apps Script accepts x-www-form-urlencoded without CORS preflight.
