@@ -33,7 +33,10 @@
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
+      background:
+        radial-gradient(circle at top right, rgba(10, 77, 28, 0.09), transparent 34%),
+        radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.6), transparent 28%),
+        var(--bg);
       color: var(--ink);
       font-family: 'Public Sans', sans-serif;
       font-size: 16px;
@@ -59,21 +62,57 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 56px 28px 80px;
+      padding: 28px 20px 48px;
       position: relative;
       z-index: 2;
+    }
+
+    .page-frame {
+      position: relative;
+      padding: 28px 24px 40px;
+      border: 1px solid rgba(26, 26, 31, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.14));
+      box-shadow: 0 22px 60px rgba(52, 43, 28, 0.08);
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+    }
+
+    .page-frame::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(26, 26, 31, 0.06);
+      pointer-events: none;
+    }
+
+    .page-frame::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 12%;
+      width: 1px;
+      height: 220px;
+      background: linear-gradient(180deg, rgba(10, 77, 28, 0), rgba(10, 77, 28, 0.3), rgba(10, 77, 28, 0));
+      pointer-events: none;
     }
 
     /* Wordmark — typography-led */
     .wordmark {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 88px;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 64px;
       opacity: 0;
       animation: fadeUp 0.8s ease-out 0.05s forwards;
+    }
+
+    .wordmark-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .wordmark .dot {
@@ -93,9 +132,22 @@
       font-variation-settings: "opsz" 20;
     }
 
+    .wordmark-note {
+      max-width: 320px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(26, 26, 31, 0.52);
+      line-height: 1.5;
+      text-align: right;
+    }
+
     /* Hero */
     .hero {
-      margin-bottom: 72px;
+      display: grid;
+      gap: 28px;
+      margin-bottom: 48px;
       opacity: 0;
       animation: fadeUp 0.9s ease-out 0.2s forwards;
     }
@@ -107,8 +159,9 @@
       line-height: 1.15;
       letter-spacing: -0.015em;
       color: var(--ink);
-      margin-bottom: 28px;
+      margin-bottom: 20px;
       font-variation-settings: "opsz" 36;
+      max-width: 13ch;
     }
 
     .hero h1 em {
@@ -129,19 +182,55 @@
     }
 
     .hero .subhead + .subhead {
-      margin-top: 10px;
+      margin-top: 18px;
     }
 
-    /* Sections */
-    section {
-      padding: 32px 0;
-      border-top: 1px solid var(--rule);
-      opacity: 0;
-      animation: fadeUp 0.9s ease-out forwards;
+    .hero-note {
+      align-self: start;
+      padding: 22px 20px;
+      border-top: 1px solid var(--ink);
     }
 
-    section:nth-of-type(1) { animation-delay: 0.35s; }
-    section:nth-of-type(2) { animation-delay: 0.45s; }
+    .hero-note-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .hero-session {
+      margin-top: 30px;
+      padding: 34px 0 0;
+      border-top: 1px solid rgba(26, 26, 31, 0.12);
+    }
+
+    .hero-session-title {
+      font-family: 'Newsreader', serif;
+      font-weight: 400;
+      font-size: 27px;
+      line-height: 1.18;
+      letter-spacing: -0.015em;
+      margin-bottom: 18px;
+    }
+
+    .hero-session-meta {
+      margin-bottom: 18px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hero-session-copy {
+      display: grid;
+      gap: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
 
     .label {
       font-family: 'Public Sans', sans-serif;
@@ -165,11 +254,11 @@
     }
 
     .meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 18px;
+      display: grid;
+      gap: 12px;
       font-size: 14px;
       color: var(--muted);
+      max-width: 34ch;
     }
 
     /* Format list */
@@ -202,20 +291,42 @@
       font-weight: 400;
     }
 
+    .format-note {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
     /* CTA — inline form */
     .cta-block {
-      margin-top: 56px;
-      padding: 36px 28px;
+      margin-top: 18px;
+      padding: 30px 24px;
       background: var(--ink);
       color: var(--bg);
-      border-radius: 2px;
+      border-radius: 0;
       opacity: 0;
       animation: fadeUp 0.9s ease-out 0.7s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-block::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(247, 242, 233, 0.12), transparent 28%),
+        linear-gradient(135deg, rgba(247, 242, 233, 0.03), transparent 55%);
+      pointer-events: none;
     }
 
     .cta-block .label {
       color: rgba(247, 242, 233, 0.55);
       margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
     }
 
     .cta-block h3 {
@@ -226,6 +337,22 @@
       margin-bottom: 28px;
       color: var(--bg);
       letter-spacing: -0.01em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 24px;
+    }
+
+    .cta-copy {
+      max-width: 30ch;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(247, 242, 233, 0.74);
     }
 
     .cta-form {
@@ -323,9 +450,9 @@
 
     /* Footer */
     footer {
-      margin-top: 64px;
-      padding-top: 28px;
-      border-top: 1px solid var(--rule);
+      margin-top: 28px;
+      padding: 18px 4px 0;
+      border-top: 1px solid rgba(26, 26, 31, 0.08);
       display: flex;
       flex-wrap: wrap;
       gap: 16px 24px;
@@ -362,13 +489,52 @@
     }
 
     @media (min-width: 720px) {
-      .container { padding: 80px 40px 96px; }
-      .wordmark { margin-bottom: 112px; }
-      .hero { margin-bottom: 88px; }
+      .container { padding: 36px 28px 56px; }
+      .page-frame { padding: 34px 34px 48px; }
+      .wordmark { margin-bottom: 84px; }
+      .hero {
+        grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.9fr);
+        align-items: start;
+        margin-bottom: 56px;
+      }
+      .hero-copy {
+        padding-right: 20px;
+      }
+      .hero-session {
+        grid-column: 1 / -1;
+        max-width: 100%;
+      }
       .hero .subhead { font-size: 22px; }
-      .topic { font-size: 26px; }
-      .cta-block { padding: 44px 36px; }
+      .cta-block { padding: 38px 32px; }
       .cta-block h3 { font-size: 26px; }
+      .cta-inner {
+        grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1fr);
+        align-items: start;
+      }
+      footer .copy {
+        flex: 0 0 auto;
+        margin-top: 0;
+      }
+    }
+
+    @media (max-width: 719px) {
+      .wordmark {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .wordmark-note {
+        text-align: left;
+        max-width: none;
+      }
+
+      .hero h1 {
+        max-width: 10.5ch;
+      }
+
+      .page-frame::before {
+        inset: 10px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -379,63 +545,86 @@
 </head>
 <body>
   <div class="container">
+    <div class="page-frame">
 
-    <header class="wordmark">
-      <div class="dot" aria-hidden="true"></div>
-      <div class="name">The Practice Roundtable</div>
-    </header>
+      <header class="wordmark">
+        <div class="wordmark-brand">
+          <div class="dot" aria-hidden="true"></div>
+          <div class="name">The Practice Roundtable</div>
+        </div>
+        <div class="wordmark-note">Private monthly knowledge exchange for senior voices in aesthetic and cosmetic practice</div>
+      </header>
 
-    <div class="hero">
-      <h1>Where senior aesthetic practitioners think out loud together, <em>in private</em>.</h1>
-      <p class="subhead">Three speakers each month on the issues shaping the field.</p>
-      <p class="subhead">Future speakers are invited from the attendees.</p>
-    </div>
+      <div class="hero">
+        <div class="hero-copy">
+          <h1>Where senior aesthetic practitioners think aloud together, <em>in private</em>.</h1>
+          <p class="subhead">Three speakers each month on the issues shaping the field.</p>
+          <p class="subhead">Future speakers are invited from the attendees.</p>
 
-    <section class="next">
-      <div class="label">Next Session</div>
-      <h2 class="topic">When complications become claims.</h2>
-      <div class="meta">
-        <span>A medico-legal caseworker's view of aesthetic practice.</span>
+          <div class="hero-session">
+            <div class="label">Next Session</div>
+            <h2 class="hero-session-title">When complications become claims.</h2>
+            <div class="hero-session-meta">June 2026</div>
+            <div class="hero-session-copy">
+              <span>A medico-legal caseworker's view of aesthetic practice.</span>
+              <span>Practical, private discussion on what happens when treatment issues move into claims territory.</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="hero-note" aria-label="Roundtable format">
+          <div class="hero-note-label">Format</div>
+          <ol class="format">
+            <li>
+              Three senior practitioners. One topic. Discussed, not presented.
+              <span class="format-note">One issue each month, discussed in a closed room rather than presented from a podium.</span>
+            </li>
+            <li>
+              Listening is the route in. Speakers are invited from the attendees.
+              <span class="format-note">Future speakers are invited from the attendees, not pulled from a fixed circuit.</span>
+            </li>
+            <li>
+              Held in private. No recording. No marketing.
+              <span class="format-note">No panel theatre. No sponsorship layer over the conversation.</span>
+            </li>
+          </ol>
+        </aside>
       </div>
-    </section>
 
-    <section class="format-section">
-      <div class="label">Format</div>
-      <ol class="format">
-        <li>Three senior practitioners. One topic. Discussed, not presented.</li>
-        <li>Listening is the route in. Speakers are invited from the attendees.</li>
-        <li>Held in private. No recording. No marketing.</li>
-      </ol>
-    </section>
+      <div class="cta-block" id="cta-block">
+        <div class="label">Take a Seat</div>
+        <div class="cta-inner">
+          <div>
+            <h3>Ask to be in the room for the next session.</h3>
+            <p class="cta-copy">Join the list for session details and priority notice when the next room opens. Small format, private discussion, limited seats.</p>
+          </div>
 
-    <div class="cta-block" id="cta-block">
-      <div class="label">Take a Seat</div>
-      <h3>Ask to be in the room for the next session.</h3>
+          <form class="cta-form" id="rsvp-form" novalidate>
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="practice">Practice (optional)</label>
+              <input type="text" id="practice" name="practice" autocomplete="organization">
+            </div>
+            <button type="submit" class="cta-button" id="submit-button">
+              <span class="label-text">Request a seat</span>
+              <span class="arrow">→</span>
+            </button>
+            <div class="cta-error" id="cta-error">Something went wrong. Please try again in a moment.</div>
+          </form>
+        </div>
+      </div>
 
-      <form class="cta-form" id="rsvp-form" novalidate>
-        <div class="field">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" autocomplete="name" required>
-        </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" autocomplete="email" required>
-        </div>
-        <div class="field">
-          <label for="practice">Practice (optional)</label>
-          <input type="text" id="practice" name="practice" autocomplete="organization">
-        </div>
-        <button type="submit" class="cta-button" id="submit-button">
-          <span class="label-text">Request a seat</span>
-          <span class="arrow">→</span>
-        </button>
-        <div class="cta-error" id="cta-error">Something went wrong. Please try again in a moment.</div>
-      </form>
+      <footer>
+        <div class="copy">© 2026 The Practice Roundtable</div>
+      </footer>
     </div>
-
-    <footer>
-      <div class="copy">© 2026 The Practice Roundtable</div>
-    </footer>
 
   </div>
 
