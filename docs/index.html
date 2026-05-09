@@ -630,7 +630,7 @@
   <script>
     const ENDPOINT_OVERRIDE = new URLSearchParams(window.location.search).get('endpoint');
     // Replace with the deployed Apps Script web app URL once published.
-    const ENDPOINT_URL = ENDPOINT_OVERRIDE || 'https://script.google.com/macros/s/AKfycbxd-2EqmlsEEbI03DfPCSZFynJazCTPxbYc9rIOgA5SX-17wyBbnq4LKKwXbwiPG8_KJg/exec';
+    const ENDPOINT_URL = ENDPOINT_OVERRIDE || 'https://script.google.com/macros/s/AKfycbzhBmGQF1wNC7NxC0sP-RMwDOHLIe1WkRt6_N8Lc3Hst6RGjsvnNSOsyTMas4bRhxIW_Q/exec';
 
     const form = document.getElementById('rsvp-form');
     const submitButton = document.getElementById('submit-button');
@@ -641,7 +641,7 @@
     function getClientMetadata() {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
       const metadata = {
-        source: 'page',
+        source: sessionStorage.getItem('_pr_source') || 'page',
         page_url: window.location.href,
         page_path: window.location.pathname,
         page_host: window.location.host,
@@ -671,6 +671,100 @@
       return metadata;
     }
 
+    // === Session tracking + geolocation + visit ping ===
+
+    function generateId() {
+      if (crypto.randomUUID) return crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    var sessionId = sessionStorage.getItem('_pr_session');
+    if (!sessionId) {
+      sessionId = generateId();
+      sessionStorage.setItem('_pr_session', sessionId);
+    }
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var source = urlParams.get('src') || 'direct';
+    var isQr = source === 'qr' ? 'true' : 'false';
+
+    var returnVisitor = localStorage.getItem('_pr_visited') ? 'true' : 'false';
+    localStorage.setItem('_pr_visited', '1');
+
+    sessionStorage.setItem('_pr_session_id', sessionId);
+    sessionStorage.setItem('_pr_source', source);
+    sessionStorage.setItem('_pr_is_qr', isQr);
+
+    function getDeviceType() {
+      var ua = navigator.userAgent;
+      if (/tablet|iPad|PlayBook|Silk/i.test(ua)) return 'tablet';
+      if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Windows Phone/i.test(ua)) return 'mobile';
+      return 'desktop';
+    }
+
+    function firePing(geo) {
+      var pingParams = new URLSearchParams({
+        action: 'ping',
+        session_id: sessionId,
+        source: source,
+        is_qr: isQr,
+        page_url: window.location.href,
+        referrer: document.referrer || '',
+        standalone: String(window.navigator.standalone || (window.matchMedia('(display-mode: standalone)').matches) || ''),
+        connection_type: navigator.connection ? navigator.connection.effectiveType : '',
+        return_visitor: returnVisitor,
+        visibility_state: document.visibilityState,
+        device_type: getDeviceType(),
+        user_agent: navigator.userAgent || '',
+        language: navigator.language || '',
+        platform: navigator.platform || '',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+        screen_width: String(window.screen.width || ''),
+        screen_height: String(window.screen.height || ''),
+        viewport_width: String(window.innerWidth || ''),
+        viewport_height: String(window.innerHeight || '')
+      });
+
+      if (geo.city) pingParams.set('city', geo.city);
+      if (geo.region) pingParams.set('region', geo.region);
+      if (geo.country) pingParams.set('country', geo.country);
+      if (geo.postal) pingParams.set('postal', geo.postal);
+      if (geo.org) pingParams.set('org', geo.org);
+      if (geo.latitude) pingParams.set('latitude', geo.latitude);
+      if (geo.longitude) pingParams.set('longitude', geo.longitude);
+
+      new Image().src = ENDPOINT_URL + '?' + pingParams.toString();
+    }
+
+    var geoPromise = fetch('https://ipapi.co/json/')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var geo = {
+          city: data.city || '',
+          region: data.region || '',
+          country: data.country_name || data.country || '',
+          postal: data.postal || '',
+          org: data.org || '',
+          latitude: data.latitude != null ? String(data.latitude) : '',
+          longitude: data.longitude != null ? String(data.longitude) : ''
+        };
+        sessionStorage.setItem('_pr_geo', JSON.stringify(geo));
+        return geo;
+      })
+      .catch(function() {
+        return {};
+      });
+
+    var pingTimer = setTimeout(function() { firePing({}); }, 3000);
+
+    geoPromise.then(function(geo) {
+      clearTimeout(pingTimer);
+      firePing(geo);
+    });
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       errorEl.classList.remove('visible');
@@ -694,11 +788,26 @@
       submitButton.disabled = true;
       buttonLabel.textContent = 'Sending…';
 
+      var geo;
+      try { geo = JSON.parse(sessionStorage.getItem('_pr_geo') || '{}'); } catch(e) { geo = {}; }
+
       const body = new URLSearchParams({
         name,
         email,
         practice,
-        ...getClientMetadata()
+        ...getClientMetadata(),
+        session_id: sessionStorage.getItem('_pr_session_id') || '',
+        is_qr: sessionStorage.getItem('_pr_is_qr') || '',
+        geo_city: geo.city || '',
+        geo_region: geo.region || '',
+        geo_country: geo.country || '',
+        geo_postal: geo.postal || '',
+        geo_org: geo.org || '',
+        geo_latitude: geo.latitude || '',
+        geo_longitude: geo.longitude || '',
+        visibility_state: document.visibilityState,
+        device_type: getDeviceType(),
+        connection_type: navigator.connection ? navigator.connection.effectiveType : ''
       });
 
       try {
