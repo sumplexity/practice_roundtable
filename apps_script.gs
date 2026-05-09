@@ -5,113 +5,98 @@
  *   - Execute as: Me (your account)
  *   - Who has access: Anyone
  *
- * The deployment URL goes into index.html as ENDPOINT_URL.
+ * After any code changes, you must create a NEW deployment
+ * (not update existing) for changes to take effect.
  *
- * Sheet expectation: a sheet named "Signups".
- * If the header row is blank, this script will add one automatically.
+ * The deployment URL goes into index.html as ENDPOINT_URL.
  */
 
-const HEADERS = [
-  'timestamp_server',
-  'name',
-  'email',
-  'practice',
-  'source',
-  'page_url',
-  'page_path',
-  'page_host',
-  'referrer',
-  'submitted_at_client',
-  'user_agent',
-  'language',
-  'languages',
-  'platform',
-  'vendor',
-  'timezone',
-  'timezone_offset_minutes',
-  'screen_width',
-  'screen_height',
-  'viewport_width',
-  'viewport_height',
-  'color_depth',
-  'pixel_ratio',
-  'touch_points',
-  'cookie_enabled',
-  'do_not_track',
-  'online',
-  'device_memory_gb',
-  'hardware_concurrency'
-];
-
-function ensureHeaderRow(sheet) {
-  const lastRow = sheet.getLastRow();
-  const existing = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
-  const firstFive = existing.slice(0, 5).join('|');
-  const isBlank = existing.every(function(cell) {
-    return cell === '';
-  });
-  const isLegacy = firstFive === 'timestamp|name|email|practice|source';
-
-  if (lastRow === 0 || isBlank || isLegacy) {
-    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
-  }
-}
-
-function getParam(params, key) {
-  return params[key] || '';
+function doGet() {
+  return ContentService.createTextOutput(
+    JSON.stringify({ status: 'ok', message: 'Practice Roundtable RSVP endpoint is live.' })
+  ).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Signups');
-  if (!sheet) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: false, error: 'sheet_not_found' }))
-      .setMimeType(ContentService.MimeType.JSON);
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var params = e.parameter || {};
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        'timestamp',
+        'name',
+        'email',
+        'practice',
+        'source',
+        'page_url',
+        'page_path',
+        'page_host',
+        'referrer',
+        'submitted_at_client',
+        'user_agent',
+        'language',
+        'languages',
+        'platform',
+        'vendor',
+        'timezone',
+        'timezone_offset_minutes',
+        'screen_width',
+        'screen_height',
+        'viewport_width',
+        'viewport_height',
+        'color_depth',
+        'pixel_ratio',
+        'touch_points',
+        'cookie_enabled',
+        'do_not_track',
+        'online',
+        'device_memory_gb',
+        'hardware_concurrency'
+      ]);
+    }
+
+    sheet.appendRow([
+      new Date(),
+      params.name || '',
+      params.email || '',
+      params.practice || '',
+      params.source || 'page',
+      params.page_url || '',
+      params.page_path || '',
+      params.page_host || '',
+      params.referrer || '',
+      params.submitted_at_client || '',
+      params.user_agent || '',
+      params.language || '',
+      params.languages || '',
+      params.platform || '',
+      params.vendor || '',
+      params.timezone || '',
+      params.timezone_offset_minutes || '',
+      params.screen_width || '',
+      params.screen_height || '',
+      params.viewport_width || '',
+      params.viewport_height || '',
+      params.color_depth || '',
+      params.pixel_ratio || '',
+      params.touch_points || '',
+      params.cookie_enabled || '',
+      params.do_not_track || '',
+      params.online || '',
+      params.device_memory_gb || '',
+      params.hardware_concurrency || ''
+    ]);
+
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: 'ok' })
+    ).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    var debugSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    debugSheet.appendRow(['ERROR', new Date(), err.toString(), e.postData ? e.postData.contents : 'no postData']);
+
+    return ContentService.createTextOutput(
+      JSON.stringify({ status: 'error', message: err.toString() })
+    ).setMimeType(ContentService.MimeType.JSON);
   }
-
-  const params = (e && e.parameter) || {};
-  ensureHeaderRow(sheet);
-
-  sheet.appendRow([
-    new Date(),
-    getParam(params, 'name'),
-    getParam(params, 'email'),
-    getParam(params, 'practice'),
-    getParam(params, 'source') || 'unknown',
-    getParam(params, 'page_url'),
-    getParam(params, 'page_path'),
-    getParam(params, 'page_host'),
-    getParam(params, 'referrer'),
-    getParam(params, 'submitted_at_client'),
-    getParam(params, 'user_agent'),
-    getParam(params, 'language'),
-    getParam(params, 'languages'),
-    getParam(params, 'platform'),
-    getParam(params, 'vendor'),
-    getParam(params, 'timezone'),
-    getParam(params, 'timezone_offset_minutes'),
-    getParam(params, 'screen_width'),
-    getParam(params, 'screen_height'),
-    getParam(params, 'viewport_width'),
-    getParam(params, 'viewport_height'),
-    getParam(params, 'color_depth'),
-    getParam(params, 'pixel_ratio'),
-    getParam(params, 'touch_points'),
-    getParam(params, 'cookie_enabled'),
-    getParam(params, 'do_not_track'),
-    getParam(params, 'online'),
-    getParam(params, 'device_memory_gb'),
-    getParam(params, 'hardware_concurrency')
-  ]);
-
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: true }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-// Optional sanity check — visit the web app URL in a browser.
-function doGet() {
-  return ContentService
-    .createTextOutput('Practice Roundtable RSVP endpoint is live.')
-    .setMimeType(ContentService.MimeType.TEXT);
 }
